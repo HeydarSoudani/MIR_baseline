@@ -90,6 +90,7 @@ def get_permuted_mnist(args):
     test_x  = test_x.view(test_x.size(0), -1)
 
     train_ds, test_ds, inv_perms = [], [], []
+    print(args.n_tasks)
     for task in range(args.n_tasks):
         perm = torch.arange(train_x.size(-1)) if task == 0 else torch.randperm(train_x.size(-1))
         print(perm)
