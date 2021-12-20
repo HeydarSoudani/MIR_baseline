@@ -2,6 +2,7 @@ import os
 import sys
 import pdb
 import torch
+import time
 import numpy as np
 import pickle as pkl
 from PIL import Image
@@ -91,7 +92,8 @@ def get_permuted_mnist(args):
     train_ds, test_ds, inv_perms = [], [], []
     for task in range(args.n_tasks):
         perm = torch.arange(train_x.size(-1)) if task == 0 else torch.randperm(train_x.size(-1))
-
+        print(perm.shape)
+        time.sleep(5)
         # build inverse permutations, so we can display samples
         inv_perm = torch.zeros_like(perm)
         for i in range(perm.size(0)):
