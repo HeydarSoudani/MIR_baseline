@@ -90,10 +90,12 @@ def get_permuted_mnist(args):
     test_x  = test_x.view(test_x.size(0), -1)
 
     train_ds, test_ds, inv_perms = [], [], []
-    print(args.n_tasks)
+    # print(args.n_tasks)
     for task in range(args.n_tasks):
+        print(train_x.shape)
+        print(test_x.shape)
         perm = torch.arange(train_x.size(-1)) if task == 0 else torch.randperm(train_x.size(-1))
-        print(perm)
+        # print(perm)
         time.sleep(5)
         # build inverse permutations, so we can display samples
         inv_perm = torch.zeros_like(perm)
