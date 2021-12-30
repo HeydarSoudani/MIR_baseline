@@ -285,8 +285,10 @@ class MLP(nn.Module):
         self.input_size = np.prod(args.input_size)
         self.hidden = nn.Sequential(nn.Linear(self.input_size, nf),
                                     nn.ReLU(True),
+                                    nn.Dropout(args.dropout),
                                     nn.Linear(nf, nf),
-                                    nn.ReLU(True))
+                                    nn.ReLU(True),
+                                    nn.Dropout(args.dropout))
 
         self.linear = nn.Linear(nf, num_classes)
 
