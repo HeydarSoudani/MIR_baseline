@@ -135,9 +135,9 @@ for run in range(args.n_runs):
     if args.use_conv:
         model = ResNet18(args.n_classes, nf=20, input_size=args.input_size)
     else:
-        n_inputs, n_feature, n_outputs = 784, args.hidden_dims , 10
-        model = MLP(n_inputs, n_feature, n_outputs, args)
-        # model = MLP(args)
+        # n_inputs, n_feature, n_outputs = 784, args.hidden_dims , 10
+        # model = MLP(n_inputs, n_feature, n_outputs, args)
+        model = MLP(args)
     if args.cuda:
         model = model.to(args.device)
 

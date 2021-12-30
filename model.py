@@ -278,44 +278,44 @@ class ResNet(nn.Module):
 def ResNet18(nclasses, nf=20, input_size=(3, 32, 32)):
     return ResNet(BasicBlock, [2, 2, 2, 2], nclasses, nf, input_size)
 
-# class MLP(nn.Module):
-#     def __init__(self, args, num_classes=10, nf=400):
-#         super(MLP, self).__init__()
-
-#         self.input_size = np.prod(args.input_size)
-#         self.hidden = nn.Sequential(nn.Linear(self.input_size, nf),
-#                                     nn.ReLU(True),
-#                                     nn.Linear(nf, nf),
-#                                     nn.ReLU(True))
-
-#         self.linear = nn.Linear(nf, num_classes)
-
-#     def return_hidden(self,x):
-#         x = x.view(-1, self.input_size)
-#         return self.hidden(x)
-
-#     def forward(self, x):
-#         out = self.return_hidden(x)
-#         return self.linear(out)
 class MLP(nn.Module):
-  def __init__(self, n_input, n_feature, n_output, args, bias=True):
-    super(MLP, self).__init__()
-    self.device = None
+    def __init__(self, args, num_classes=10, nf=100):
+        super(MLP, self).__init__()
 
-    self.hidden = nn.Sequential(nn.Linear(n_input, 100),
-                                nn.ReLU(True),
-                                nn.Dropout(args.dropout),
-                                nn.Linear(100, n_feature),
-                                nn.ReLU(True),
-                                nn.Dropout(args.dropout))
-    self.linear = nn.Linear(n_feature, n_output, bias=bias)
-    self.hidden.apply(Xavier)
+        self.input_size = np.prod(args.input_size)
+        self.hidden = nn.Sequential(nn.Linear(self.input_size, nf),
+                                    nn.ReLU(True),
+                                    nn.Linear(nf, nf),
+                                    nn.ReLU(True))
+
+        self.linear = nn.Linear(nf, num_classes)
+
+    def return_hidden(self,x):
+        x = x.view(-1, self.input_size)
+        return self.hidden(x)
+
+    def forward(self, x):
+        out = self.return_hidden(x)
+        return self.linear(out)
+# class MLP(nn.Module):
+#   def __init__(self, n_input, n_feature, n_output, args, bias=True):
+#     super(MLP, self).__init__()
+#     self.device = None
+
+#     self.hidden = nn.Sequential(nn.Linear(n_input, 100),
+#                                 nn.ReLU(True),
+#                                 nn.Dropout(args.dropout),
+#                                 nn.Linear(100, n_feature),
+#                                 nn.ReLU(True),
+#                                 nn.Dropout(args.dropout))
+#     self.linear = nn.Linear(n_feature, n_output, bias=bias)
+#     self.hidden.apply(Xavier)
   
-  def forward(self, samples):
-    x = samples.view(samples.size(0), -1)
-    features = self.hidden(x)
-    outputs = self.linear(features)
-    return outputs
+#   def forward(self, samples):
+#     x = samples.view(samples.size(0), -1)
+#     features = self.hidden(x)
+#     outputs = self.linear(features)
+#     return outputs
 
 ''' classifier for GEN and GEN-MIR'''
 class classifier(nn.Module):
