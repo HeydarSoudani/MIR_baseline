@@ -31,6 +31,8 @@ parser.add_argument('--disc_iters', type=int, default=1,
 parser.add_argument('--batch_size', type=int, default=10)
 parser.add_argument('--buffer_batch_size', type=int, default=10)
 parser.add_argument('--use_conv', action='store_true')
+parser.add_argument('--dropout', type=float, default=0.2, help='')
+parser.add_argument('--hidden_dims', type=int, default=100, help='')
 parser.add_argument('--samples_per_task', type=int, default=-1,
     help='if negative, full dataset is used')
 parser.add_argument('--mem_size', type=int, default=600, help='controls buffer size')
@@ -133,7 +135,9 @@ for run in range(args.n_runs):
     if args.use_conv:
         model = ResNet18(args.n_classes, nf=20, input_size=args.input_size)
     else:
-        model = MLP(args)
+        n_inputs, n_feature, n_outputs = 784, args.hidden_dims , 10
+        model = MLP(n_inputs, n_feature, n_outputs, args)
+        # model = MLP(args)
     if args.cuda:
         model = model.to(args.device)
 
