@@ -121,7 +121,8 @@ def get_split_mnist(args):
     args.n_tasks = 5 if args.n_tasks==-1 else args.n_tasks
     if 'mem_size' in args:
         args.buffer_size = args.n_tasks * args.mem_size * 2
-    args.use_conv = False
+    # args.use_conv = False
+    args.use_conv = True
     args.input_type = 'binary'
     args.input_size = [1,28,28]
     if args.output_loss is None:
@@ -131,8 +132,13 @@ def get_split_mnist(args):
     assert '1.' in str(torch.__version__)[:2], 'Use Pytorch 1.x!'
 
     # fetch MNIST
-    train = datasets.MNIST('Data/', train=True,  download=True)
-    test  = datasets.MNIST('Data/', train=False, download=True)
+    # train = datasets.MNIST('Data/', train=True,  download=True)
+    # test  = datasets.MNIST('Data/', train=False, download=True)
+
+    # fetch FashionMNIST
+    train = datasets.FashionMNIST('Data/', train=True,  download=True)
+    test  = datasets.FashionMNIST('Data/', train=False, download=True)
+
 
     try:
         train_x, train_y = train.data, train.targets
