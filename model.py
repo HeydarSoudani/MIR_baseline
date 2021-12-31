@@ -385,7 +385,7 @@ class Conv_4(nn.Module):
         self.ip1 = nn.Linear(self.filters_length*self.last_layer*self.last_layer, args.hidden_dims)
         self.preluip1 = nn.PReLU()
         self.dropoutip1 = nn.Dropout(args.dropout)
-        self.classifier = nn.Linear(args.hidden_dims, 10)
+        self.linear = nn.Linear(args.hidden_dims, 10)
 
     def return_hidden(self,x):
         x = self.layer1(x)
@@ -406,7 +406,7 @@ class Conv_4(nn.Module):
         # features = self.preluip1(self.ip1(x))
         
         x = self.dropoutip1(features)
-        logits = self.classifier(x)
+        logits = self.linear(x)
         return logits
 
     def to(self, *args, **kwargs):
