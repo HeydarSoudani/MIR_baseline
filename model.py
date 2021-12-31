@@ -423,7 +423,7 @@ class Conv_4(nn.Module):
         self.ip1 = self.ip1.to(*args, **kwargs)
         self.preluip1 = self.preluip1.to(*args, **kwargs)
         self.dropoutip1 = self.dropoutip1.to(*args, **kwargs)
-        self.classifier = self.classifier.to(*args, **kwargs)
+        self.linear = self.linear.to(*args, **kwargs)
         return self
 
     def save(self, path):
