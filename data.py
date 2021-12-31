@@ -161,9 +161,9 @@ def get_split_mnist(args):
             torch.stack([elem[i] for elem in out_test]) for i in [0,1] ]
 
     # --- for fmnist
-    if args.use_conv:
-       train_x = train_x.unsqueeze(1)
-       test_x  = test_x.unsqueeze(1)
+    # if args.use_conv:
+    #    train_x = train_x.unsqueeze(1)
+    #    test_x  = test_x.unsqueeze(1)
     #else:
     #    train_x = train_x.view(train_x.size(0), -1)
     #    test_x  = test_x.view(test_x.size(0), -1)
