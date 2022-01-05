@@ -339,7 +339,11 @@ def get_split_cifar100(args):
 
     train_ds, val_ds = make_valid_from_train(train_ds)
 
+    train_ds = map(lambda x : XYDataset(x[0], x[1], **{'source':'cifar100'}), train_ds)
+    val_ds   = map(lambda x : XYDataset(x[0], x[1], **{'source':'cifar100'}), val_ds)
+    test_ds  = map(lambda x : XYDataset(x[0], x[1], **{'source':'cifar100'}), test_ds)
 
+    return train_ds, val_ds, test_ds
 
 def get_miniimagenet(args):
     ROOT_PATH = '/home/eugene//data/filelists/miniImagenet/materials/images'
