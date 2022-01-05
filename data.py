@@ -272,6 +272,75 @@ def get_split_cifar10(args):
 
     return train_ds, val_ds, test_ds
 
+""" Split CIFAR10 into 20 tasks {{0,1,2,3,4}, ... {95,96,97,98,99}} """
+def get_split_cifar100(args):
+    assert '1.' in str(torch.__version__)[:2], 'Use Pytorch 1.x!'
+    args.n_tasks   = 20
+    args.n_classes = 100
+    args.buffer_size = args.n_tasks * args.mem_size * 2
+    args.multiple_heads = False
+    args.use_conv = True
+    args.n_classes_per_task = 5
+    args.input_size = [3, 32, 32]
+    args.input_type = 'continuous'
+    # because data is between [-1,1]:
+    assert args.output_loss is not 'bernouilli'
+    if args.output_loss == None:
+        #TODO(multinomial is broken)
+        #args.output_loss = 'multinomial'
+        args.output_loss = 'mse'
+        print('\nsetting output loss to MSE')
+    
+    # fetch CIFAR100
+    train = datasets.CIFAR100('Data/', train=True,  download=True)
+    test  = datasets.CIFAR100('Data/', train=False, download=True)
+
+    try:
+        train_x, train_y = train.data, train.targets
+        test_x, test_y = test.data, test.targets
+    except:
+        train_x, train_y = train.train_data, train.train_labels
+        test_x,  test_y  = test.test_data,   test.test_labels
+
+    # sort according to the label
+    out_train = [
+        (x,y) for (x,y) in sorted(zip(train_x, train_y), key=lambda v : v[1]) ]
+
+    out_test = [
+        (x,y) for (x,y) in sorted(zip(test_x, test_y), key=lambda v : v[1]) ]
+
+    train_x, train_y = [
+            np.stack([elem[i] for elem in out_train]) for i in [0,1] ]
+
+    test_x,  test_y  = [
+            np.stack([elem[i] for elem in out_test]) for i in [0,1] ]
+
+    train_x = torch.Tensor(train_x).permute(0, 3, 1, 2).contiguous()
+    test_x  = torch.Tensor(test_x).permute(0, 3, 1, 2).contiguous()
+
+    train_y = torch.Tensor(train_y)
+    test_y  = torch.Tensor(test_y)
+
+    # get indices of class split
+    train_idx = [((train_y + i) % args.n_classes).argmax() for i in range(args.n_classes)]
+    train_idx = [0] + [x + 1 for x in sorted(train_idx)]
+
+    test_idx  = [((test_y + i) % args.n_classes).argmax() for i in range(args.n_classes)]
+    test_idx  = [0] + [x + 1 for x in sorted(test_idx)]
+
+    train_ds, test_ds = [], []
+    skip = args.n_classes_per_task #args.n_tasks
+    for i in range(0, args.n_classes, skip):
+        tr_s, tr_e = train_idx[i], train_idx[i + skip]
+        te_s, te_e = test_idx[i],  test_idx[i + skip]
+
+        train_ds += [(train_x[tr_s:tr_e], train_y[tr_s:tr_e])]
+        test_ds  += [(test_x[te_s:te_e],  test_y[te_s:te_e])]
+
+    train_ds, val_ds = make_valid_from_train(train_ds)
+
+
+
 def get_miniimagenet(args):
     ROOT_PATH = '/home/eugene//data/filelists/miniImagenet/materials/images'
     ROOT_PATH_CSV = '/home/eugene//data/filelists/miniImagenet/materials'
