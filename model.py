@@ -7,6 +7,7 @@ import torch
 from torch import nn
 import torch.utils.data
 from torch.nn import functional as F
+import torchvision.models as models
 
 from VAE.layers import GatedDense
 from utils import Reshape
@@ -299,6 +300,7 @@ class MLP(nn.Module):
     def forward(self, x):
         out = self.return_hidden(x)
         return self.linear(out)
+
 # class MLP(nn.Module):
 #   def __init__(self, n_input, n_feature, n_output, args, bias=True):
 #     super(MLP, self).__init__()
@@ -434,16 +436,41 @@ class Conv_4(nn.Module):
         self.load_state_dict(state_dict)
 
 
+class Resnet50(nn.Module):
+    def __init__(self, args):
+        super(Resnet50, self).__init__()
 
+        self.pretrained = models.resnet50(pretrained=True)
+        self.fc1 = nn.Linear(1000, args.hidden_dims)
+        self.dp1 = nn.Dropout(args.dropout)
+        self.linear = nn.Linear(hidden_dims, 100)
+        self.dp2 = nn.Dropout(args.dropout)
 
+        # init the fc layers
+        self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
+        self.pretrained.fc.bias.data.zero_()
+        self.fc1.apply(Xavier)
+        self.linear.apply(Xavier)
 
+    def return_hidden(self,x):
+        # x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), 3, 32, 32)
+        x = self.pretrained(x)
+        x = self.dp1(torch.relu(x))
+        features = torch.relu(self.fc1(x))
+        return features
 
+    def forward(self, x):
+        features = self.return_hidden(x)
+        out = self.linear(self.dp2(features))
+        return out
+    
+    def save(self, path):
+        torch.save(self.state_dict(), path)
 
-
-
-
-
-
+    def load(self, path):
+        state_dict = torch.load(path)
+        self.load_state_dict(state_dict)
 
 
 

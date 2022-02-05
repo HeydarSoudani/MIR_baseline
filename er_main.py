@@ -9,7 +9,7 @@ from utils  import get_logger, get_temp_logger, logging_per_task
 from buffer import Buffer
 from copy   import deepcopy
 from pydoc  import locate
-from model  import ResNet18, MLP, Conv_4
+from model  import ResNet18, MLP, Conv_4, Resnet50
 
 # Arguments
 # -----------------------------------------------------------------------------------------
@@ -133,8 +133,9 @@ for run in range(args.n_runs):
 
     # CLASSIFIER
     if args.use_conv:
-        model = ResNet18(args.n_classes, nf=20, input_size=args.input_size)
+        # model = ResNet18(args.n_classes, nf=20, input_size=args.input_size)
         # model = Conv_4(args)
+        model = Resnet50(args)
     else:
         # n_inputs, n_feature, n_outputs = 784, args.hidden_dims , 10
         # model = MLP(n_inputs, n_feature, n_outputs, args)
