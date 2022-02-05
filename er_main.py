@@ -32,7 +32,7 @@ parser.add_argument('--batch_size', type=int, default=10)
 parser.add_argument('--buffer_batch_size', type=int, default=10)
 parser.add_argument('--use_conv', action='store_true')
 parser.add_argument('--dropout', type=float, default=0.2, help='')
-parser.add_argument('--hidden_dims', type=int, default=100, help='')
+parser.add_argument('--hidden_dims', type=int, default=160, help='')
 parser.add_argument('--samples_per_task', type=int, default=-1,
     help='if negative, full dataset is used')
 parser.add_argument('--mem_size', type=int, default=600, help='controls buffer size')
